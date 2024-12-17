@@ -1,6 +1,7 @@
 package com.charity_hub.infrastructure.services;
 
 import com.charity_hub.domain.contracts.IJWTGenerator;
+import com.charity_hub.domain.contracts.ILogger;
 import com.charity_hub.domain.models.account.Account;
 import com.charity_hub.domain.models.device.Device;
 import com.charity_hub.infrastructure.mappers.TokenMapper;
@@ -19,8 +20,10 @@ public class JwtGenerator implements IJWTGenerator {
 
     @Value("${auth.secretKey}")
     private String secretKey;
+    private final ILogger logger;
 
-    public JwtGenerator() {
+    public JwtGenerator(ILogger logger) {
+        this.logger = logger;
     }
 
     @Override
@@ -32,6 +35,7 @@ public class JwtGenerator implements IJWTGenerator {
             device, 
             new Date(expiryDate.getTimeInMillis())
         );
+        logger.info("jwt id: ".formatted(jwtPayload.getJwtId()));
         return createToken(jwtPayload);
     }
 

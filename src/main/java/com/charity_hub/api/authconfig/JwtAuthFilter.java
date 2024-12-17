@@ -1,13 +1,12 @@
 package com.charity_hub.api.authconfig;
 
 import com.charity_hub.api.common.AccessTokenPayload;
+import com.charity_hub.domain.contracts.ILogger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,11 +23,12 @@ import java.util.stream.Collectors;
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtVerifier jwtVerifier;
     private final ObjectMapper mapper;
-    private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
+    private final ILogger logger;
 
-    public JwtAuthFilter(JwtVerifier jwtVerifier, ObjectMapper mapper) {
+    public JwtAuthFilter(JwtVerifier jwtVerifier, ObjectMapper mapper, ILogger logger) {
         this.jwtVerifier = jwtVerifier;
         this.mapper = mapper;
+        this.logger = logger;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
 
             var claims = jwtVerifier.verify(token);
-            log.info("Token verified successfully");
+            logger.info("Token verified successfully");
 
             var payload = AccessTokenPayload.fromPayload(claims);
             var authentication = new UsernamePasswordAuthenticationToken(
@@ -63,7 +63,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            log.error("Error processing JWT token", e);
+            logger.error("Error processing JWT token", e);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             

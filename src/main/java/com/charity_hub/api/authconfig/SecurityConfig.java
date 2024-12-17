@@ -1,8 +1,7 @@
 package com.charity_hub.api.authconfig;
 
+import com.charity_hub.domain.contracts.ILogger;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,7 +18,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
-    protected final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
+
+    private final ILogger logger;
+
+    public SecurityConfig(ILogger logger) {
+        this.logger = logger;
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
@@ -53,7 +57,7 @@ public class SecurityConfig {
         );
 
         http.addFilterBefore(
-            new JwtAuthFilter(jwtVerifier, new ObjectMapper()),
+            new JwtAuthFilter(jwtVerifier, new ObjectMapper(), logger),
             AnonymousAuthenticationFilter.class
         );
 

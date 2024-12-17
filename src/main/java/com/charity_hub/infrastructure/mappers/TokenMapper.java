@@ -9,15 +9,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.UUID;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Component
 public class TokenMapper {
 
     public static JWTPayload toAccessToken(Account account, Device device, Date expireAt) {
-        Logger.getAnonymousLogger().info("jwt id " + UUID.randomUUID());
-
         return new AccessTokenPayload(
                 device.getDeviceType().value(),           // audience
                 UUID.randomUUID().toString(),             // jwtId
