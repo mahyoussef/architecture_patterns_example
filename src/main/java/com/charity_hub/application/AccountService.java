@@ -9,14 +9,14 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class AuthenticateService {
+public class AccountService {
     private final IAccountRepo accountRepo;
     private final IInvitationRepo invitationRepo;
     private final IAuthProvider authProvider;
     private final IJWTGenerator jwtGenerator;
     private final ILogger logger;
 
-    public AuthenticateService(
+    public AccountService(
             IAccountRepo accountRepo,
             IInvitationRepo invitationRepo,
             IAuthProvider authProvider,
@@ -30,7 +30,7 @@ public class AuthenticateService {
         this.logger = logger;
     }
 
-    public CompletableFuture<AuthenticateResponse> handle(Authenticate command) {
+    public CompletableFuture<AuthenticateResponse> authenticate(Authenticate command) {
         return CompletableFuture.supplyAsync(() -> {
             logger.info("Handling authentication for idToken: %s".formatted(command.idToken()));
 

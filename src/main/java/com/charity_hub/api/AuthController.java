@@ -2,7 +2,7 @@ package com.charity_hub.api;
 
 import com.charity_hub.api.common.DeferredResults;
 import com.charity_hub.application.Authenticate;
-import com.charity_hub.application.AuthenticateService;
+import com.charity_hub.application.AccountService;
 import com.charity_hub.domain.contracts.ILogger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,11 +12,11 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 @RestController
 public class AuthController {
-    private final AuthenticateService authenticateHandler;
+    private final AccountService authenticateHandler;
     private final ILogger logger;
 
-    public AuthController(AuthenticateService authenticateService, ILogger logger) {
-        this.authenticateHandler = authenticateService;
+    public AuthController(AccountService accountService, ILogger logger) {
+        this.authenticateHandler = accountService;
         this.logger = logger;
     }
 
@@ -24,7 +24,7 @@ public class AuthController {
     public DeferredResult<ResponseEntity<?>> login(@RequestBody Authenticate authenticate) {
         logger.info("Processing authentication request");
         return DeferredResults.from(
-                authenticateHandler.handle(authenticate)
+                authenticateHandler.authenticate(authenticate)
                         .thenApply(ResponseEntity::ok)
         );
     }
